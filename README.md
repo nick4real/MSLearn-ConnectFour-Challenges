@@ -6,7 +6,7 @@ The module: https://learn.microsoft.com/en-us/training/modules/dotnet-connect-fo
 
 |Challenges | Is done |
 |-----------|---------|
-| To make the app smaller, remove the default layout and extra pages. | Not yet |
+| To make the app smaller, remove the default layout and extra pages. | Done |
 | Improve the parameters to the Board component so that you can pass any valid CSS color value. | Not yet |       
 | Improve the indicators appearance with some CSS and HTML layout. | Not yet |
 | Introduce sound effects. | Not yet |
