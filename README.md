@@ -1,5 +1,8 @@
 # MSLearn-ConnectFour-Challenges
-Completing MS Learn Blazor module with challenges
+
+Completing MS Learn Blazor module with challenges.
+
+The module: https://learn.microsoft.com/en-us/training/modules/dotnet-connect-four/
 
 |Challenges | Is done |
 |-----------|---------|
