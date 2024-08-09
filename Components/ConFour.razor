@@ -4,9 +4,9 @@
 <HeadContent>
     <style>
         :root {
-            --board-bg: @ColorTranslator.ToHtml(BoardColor); /** the color of the board **/
-            --player1: @ColorTranslator.ToHtml(Player1Color); /** Player 1's piece color **/
-            --player2: @ColorTranslator.ToHtml(Player2Color); /** Player 2's piece color **/
+            --board-bg: @BoardColor; /** the color of the board **/
+            --player1: @Player1Color; /** Player 1's piece color **/
+            --player2: @Player2Color; /** Player 2's piece color **/
         }
     </style>
 </HeadContent>
@@ -46,13 +46,13 @@
 
 @code {
     [Parameter] 
-    public Color BoardColor { get; set; } = ColorTranslator.FromHtml("yellow");
+    public string BoardColor { get; set; } = "yellow";
 
     [Parameter] 
-    public Color Player1Color { get; set; } = ColorTranslator.FromHtml("red");
+    public string Player1Color { get; set; } = "red";
 
     [Parameter] 
-    public Color Player2Color { get; set; } = ColorTranslator.FromHtml("blue");
+    public string Player2Color { get; set; } = "blue";
 
     private string[] pieces = new string[42];
     private string winnerMessage = string.Empty;
