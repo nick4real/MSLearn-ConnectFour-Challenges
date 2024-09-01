@@ -1,5 +1,14 @@
+:root {
+    --text-color: #ebe6f5;
+    --bg-color: #0b0813;
+    --primary-color: #b7a1d9;
+    --secondary-color: #752f3f;
+    --accent-color: #b96c52;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /*background-color: var(--bg-color);*/
 }
 
 a, .btn-link {

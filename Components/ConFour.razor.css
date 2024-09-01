@@ -1,5 +1,13 @@
-﻿div {
-    position: relative
+﻿
+
+div {
+    position: relative;
+}
+
+article {
+    display: flex;
+    justify-content: space-evenly;
+    width: 28em;
 }
 
 nav {
@@ -7,7 +15,7 @@ nav {
     width: 30em;
     display: inline-flex;
     flex-direction: row;
-    margin-left: 10px
+    margin-left: 0px;
 }
 
     nav span {
@@ -17,8 +25,14 @@ nav {
         font-size: 1em
     }
 
+img.arrow {
+    height: 30px;
+    color: var(--board-bg);
+    fill: var(--board-bg);
+}
+
 div.board {
-    margin-top: 1em;
+    margin-top: 0em;
     flex-wrap: wrap;
     width: 30em;
     height: 24em;
@@ -26,45 +40,45 @@ div.board {
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
-    z-index: -5;
+    z-index: 5;
     row-gap: 0;
     pointer-events: none;
-    border-left: 10px solid var(--board-bg)
+    border-left: 0px solid var(--board-bg)
 }
 
 span.container {
     width: 4em;
     height: 4em;
     margin: 0;
-    padding: 4px;
+    padding: 8px;
     overflow: hidden;
     background-color: transparent;
     position: relative;
-    z-index: -2;
+    z-index: 4;
     pointer-events: none
 }
 
 .container span {
-    width: 3.5em;
-    height: 3.5em;
+    width: 3.08em;
+    height: 3.08em;
     border-radius: 50%;
-    box-shadow: 0 0 0 3em var(--board-bg);
+    box-shadow: 0 0 0 0.4em var(--board-bg);
     left: 0;
-    position: absolute;
+    position: relative;
     display: block;
-    z-index: 5;
+    z-index: 4;
     pointer-events: none
 }
 
 .player1, .player2 {
-    width: 3.5em;
-    height: 3.5em;
+    width: 3em;
+    height: 3em;
     border-radius: 50%;
     left: 0;
     top: 0;
     position: absolute;
     display: block;
-    z-index: -8
+    z-index: 3
 }
 
 .player1 {
@@ -84,31 +98,31 @@ span.container {
 }
 
 .col0 {
-    left: calc(0em)
+    left: calc(0.5em)
 }
 
 .col1 {
-    left: calc(4em)
+    left: calc(4.5em)
 }
 
 .col2 {
-    left: calc(8em)
+    left: calc(8.5em)
 }
 
 .col3 {
-    left: calc(12em)
+    left: calc(12.5em)
 }
 
 .col4 {
-    left: calc(16em)
+    left: calc(16.5em)
 }
 
 .col5 {
-    left: calc(20em)
+    left: calc(20.5em)
 }
 
 .col6 {
-    left: calc(24em)
+    left: calc(24.5em)
 }
 
 .drop1 {
@@ -143,7 +157,7 @@ span.container {
 
 @keyframes drop1 {
     100%,75%,90%,97% {
-        transform: translateY(0em)
+        transform: translateY(0.5em)
     }
 
     80% {
@@ -161,7 +175,7 @@ span.container {
 
 @keyframes drop2 {
     100%,75%,90%,97% {
-        transform: translateY(4em)
+        transform: translateY(4.5em)
     }
 
     80% {
@@ -179,7 +193,7 @@ span.container {
 
 @keyframes drop3 {
     100%,75%,90%,97% {
-        transform: translateY(8em)
+        transform: translateY(8.5em)
     }
 
     80% {
@@ -197,7 +211,7 @@ span.container {
 
 @keyframes drop4 {
     100%,75%,90%,97% {
-        transform: translateY(12em)
+        transform: translateY(12.5em)
     }
 
     80% {
@@ -215,7 +229,7 @@ span.container {
 
 @keyframes drop5 {
     100%,75%,90%,97% {
-        transform: translateY(16em)
+        transform: translateY(16.5em)
     }
 
     80% {
@@ -233,7 +247,7 @@ span.container {
 
 @keyframes drop6 {
     100%,75%,90%,97% {
-        transform: translateY(20em)
+        transform: translateY(20.5em)
     }
 
     80% {

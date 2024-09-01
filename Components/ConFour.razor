@@ -1,32 +1,39 @@
 ﻿@using System.Drawing
 @inject GameState State
+@rendermode InteractiveServer
 
 <HeadContent>
     <style>
         :root {
-            --board-bg: @BoardColor; /** the color of the board **/
-            --player1: @Player1Color; /** Player 1's piece color **/
-            --player2: @Player2Color; /** Player 2's piece color **/
+            --board-bg: rgb(66, 99, 71);
+            --player1: #ff6347;
+            --player2: rgba(106, 90, 205, 0.5);
         }
     </style>
 </HeadContent>
+
+<article>
+    @if (!string.IsNullOrEmpty(winnerMessage))
+    {
+        <div class="alert alert-primary"><strong>@winnerMessage</strong></div>
+    }
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger"><strong>@errorMessage</strong></div>
+    }
+    @if (!string.IsNullOrEmpty(CurrentTurn))
+    {
+        <div class="alert alert-info"><strong>@CurrentTurn</strong></div>
+    }
+</article>
 
 <nav>
     @for (byte i = 0; i < 7; i++)
     {
         var col = i;
-        <span title="Click to play a piece" @onclick="() => PlayPiece(col)">🔽</span>
+        <span title="Click to play a piece" @onclick="() => PlayPiece(col)"><img class="arrow" src="arrow.svg"></span>
     }
 </nav>
-
-<article>
-    
-    <span class="alert-info">@winnerMessage</span>
-    <button style="@ResetStyle" @onclick="ResetGame">Reset the game</button>
-    <br />
-    <span class="alert-danger">@errorMessage</span>
-    <span class="alert-info">@CurrentTurn</span>
-</article>
 
 <div>
     
@@ -44,22 +51,16 @@
     </div>
 </div>
 
+<button style="@ResetStyle" class="btn btn-primary mt-2" @onclick="ResetGame">Reset the game</button>
+
+
 @code {
-    [Parameter] 
-    public string BoardColor { get; set; } = "yellow";
-
-    [Parameter] 
-    public string Player1Color { get; set; } = "red";
-
-    [Parameter] 
-    public string Player2Color { get; set; } = "blue";
-
     private string[] pieces = new string[42];
     private string winnerMessage = string.Empty;
     private string errorMessage = string.Empty;
 
     private string CurrentTurn => (winnerMessage == string.Empty) ? $"Player {State.PlayerTurn}'s Turn" : "";
-    private string ResetStyle => (winnerMessage == string.Empty) ? "display: none;" : "";
+    private string ResetStyle => (winnerMessage == string.Empty) ? "display: none;" : "width: 28em;";
 
     private void PlayPiece(byte col)
     {
@@ -69,6 +70,7 @@
             var turn = State.CurrentTurn;
             var landingRow = State.PlayPiece(col);
             pieces[turn] = $"player{player} col{col} drop{landingRow}";
+            errorMessage = string.Empty;
         }
         catch (Exception ex)
         {
