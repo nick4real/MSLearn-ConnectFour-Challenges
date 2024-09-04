@@ -1,5 +1,6 @@
 ﻿@using System.Drawing
 @inject GameState State
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 
 <HeadContent>
@@ -27,6 +28,8 @@
     }
 </article>
 
+<audio id="sound" src="beep.mp3" />
+
 <nav>
     @for (byte i = 0; i < 7; i++)
     {
@@ -36,7 +39,6 @@
 </nav>
 
 <div>
-    
     <div class="board">
         @for (var i = 0; i < 42; i++)
         {
@@ -71,6 +73,7 @@
             var landingRow = State.PlayPiece(col);
             pieces[turn] = $"player{player} col{col} drop{landingRow}";
             errorMessage = string.Empty;
+            JS.InvokeVoidAsync("playSound", "sound");
         }
         catch (Exception ex)
         {
