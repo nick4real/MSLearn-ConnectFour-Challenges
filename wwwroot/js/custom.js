@@ -1,3 +1,4 @@
 ﻿window.playSound = (id) => {
-    document.getElementById(id).play()
+    document.getElementById(id).currentTime = 0;
+    document.getElementById(id).play();
 }
