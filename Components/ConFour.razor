@@ -34,7 +34,14 @@
     @for (byte i = 0; i < 7; i++)
     {
         var col = i;
-        <span title="Click to play a piece" @onclick="() => PlayPiece(col)"><img class="arrow" src="arrow.svg"></span>
+        if (!IsColumnFull(col))
+        {
+            <span title="Click to play a piece" @onclick="() => PlayPiece(col)"><img class="arrow" src="arrow.svg"></span>
+        }
+        else
+        {
+            <span/>
+        }
     }
 </nav>
 
@@ -89,6 +96,11 @@
                 _ => ""
             };
         }
+    }
+
+    private bool IsColumnFull(byte col)
+    {
+        return State.TheBoard[col] != 0;
     }
 
     void ResetGame()

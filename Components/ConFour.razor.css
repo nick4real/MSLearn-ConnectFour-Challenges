@@ -83,7 +83,7 @@ span.container {
 
 .player1 {
     background-color: var(--player1);
-    animation-timing-function: cubic-bezier(.5,.05,1,.5);
+    animation-timing-function: ease-out;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     box-shadow: 0 0 0 4px var(--player1)
@@ -91,7 +91,7 @@ span.container {
 
 .player2 {
     background-color: var(--player2);
-    animation-timing-function: cubic-bezier(.5,.05,1,.5);
+    animation-timing-function: ease-out;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     box-shadow: 0 0 0 4px var(--player2)
@@ -126,139 +126,67 @@ span.container {
 }
 
 .drop1 {
-    animation-duration: 1s;
+    animation-duration: 0.3s;
     animation-name: drop1
 }
 
 .drop2 {
-    animation-duration: 1.5s;
+    animation-duration: 0.4s;
     animation-name: drop2
 }
 
 .drop3 {
-    animation-duration: 1.6s;
+    animation-duration: 0.5s;
     animation-name: drop3
 }
 
 .drop4 {
-    animation-duration: 1.7s;
+    animation-duration: 0.6s;
     animation-name: drop4
 }
 
 .drop5 {
-    animation-duration: 1.8s;
+    animation-duration: 0.7s;
     animation-name: drop5
 }
 
 .drop6 {
-    animation-duration: 1.9s;
+    animation-duration: 0.8s;
     animation-name: drop6
 }
 
 @keyframes drop1 {
-    100%,75%,90%,97% {
+    100% {
         transform: translateY(0.5em)
-    }
-
-    80% {
-        transform: translateY(-.4em)
-    }
-
-    95% {
-        transform: translateY(-.8em)
-    }
-
-    99% {
-        transform: translateY(-1em)
-    }   
+    }  
 }
 
 @keyframes drop2 {
-    100%,75%,90%,97% {
+    100% {
         transform: translateY(4.5em)
-    }
-
-    80% {
-        transform: translateY(3.8em)
-    }
-
-    95% {
-        transform: translateY(4.6em)
-    }
-
-    99% {
-        transform: translateY(4.9em)
     }
 }
 
 @keyframes drop3 {
-    100%,75%,90%,97% {
+    100% {
         transform: translateY(8.5em)
-    }
-
-    80% {
-        transform: translateY(7.2em)
-    }
-
-    95% {
-        transform: translateY(8.3em)
-    }
-
-    99% {
-        transform: translateY(8.8em)
     }
 }
 
 @keyframes drop4 {
-    100%,75%,90%,97% {
+    100% {
         transform: translateY(12.5em)
-    }
-
-    80% {
-        transform: translateY(10.6em)
-    }
-
-    95% {
-        transform: translateY(12em)
-    }
-
-    99% {
-        transform: translateY(12.7em)
     }
 }
 
 @keyframes drop5 {
-    100%,75%,90%,97% {
-        transform: translateY(16.5em)
-    }
-
-    80% {
-        transform: translateY(14em)
-    }
-
-    95% {
-        transform: translateY(15.7em)
-    }
-
-    99% {
+    100% {
         transform: translateY(16.5em)
     }
 }
 
 @keyframes drop6 {
-    100%,75%,90%,97% {
+    100% {
         transform: translateY(20.5em)
-    }
-
-    80% {
-        transform: translateY(17.4em)
-    }
-
-    95% {
-        transform: translateY(19.4em)
-    }
-
-    99% {
-        transform: translateY(20.4em)
     }
 }
