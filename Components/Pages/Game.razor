@@ -1,0 +1,117 @@
+﻿@page "/{InviteCode:length(5)}"
+@inject IJSRuntime JS
+@inject HubConnection _hubConnection
+@inject NavigationManager _navigationManager
+
+<PageTitle>Connect four game</PageTitle>
+
+<div class="main container-sm">
+    <div class="col t-container" style="justify-content: center">
+        <div class="row" >
+            <h1 class="w-100">Connect four</h1>
+        </div>
+        @if (State == Result.Connecting)
+        {
+            <div class="row">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">
+                            Loading...
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (State == Result.Error)
+        {
+            <div class="row">
+                <div class="alert alert-danger"><strong>@errorMessage</strong></div>
+            </div>
+            <div class="row">
+                <button @onclick='() => Disconnect()' class="btn btn-primary w-100">Go to main page</button>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <ConFour LobbyId="@InviteCode" />
+            </div>
+            <div class="row">
+                <input class="form-control" value="@_navigationManager.Uri" readonly/>
+            </div>
+            <div class="row">
+                <button @onclick="(() => WriteTextAsync(Link))" class="btn btn-primary w-100">Copy link</button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string InviteCode { get; set; } = string.Empty;
+
+    private Result State = Result.Connecting;
+    private string errorMessage = string.Empty;
+
+    public string Link => _navigationManager.Uri;
+
+    public ValueTask WriteTextAsync(string text)
+    {
+        return JS.InvokeVoidAsync("copyToClipboard", text);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (InviteCode.Length != 5)
+            {
+                errorMessage = "Wrong code";
+                State = Result.Error;
+                StateHasChanged();
+                return;
+            }
+
+            await Run();
+            var isConnected = await _hubConnection.InvokeAsync<bool>("JoinLobby", InviteCode);
+
+            if (!isConnected)
+            {
+                errorMessage = "Code is not valid or group is already full";
+                State = Result.Error;
+                StateHasChanged();
+                return;
+            }
+
+            State = Result.OK;
+            StateHasChanged();
+        }
+    }
+
+    public async Task Run()
+    {
+        if (_hubConnection.State == HubConnectionState.Disconnected)
+            await _hubConnection.StartAsync();
+    }
+
+    public async Task Stop()
+    {
+        if (_hubConnection.State != HubConnectionState.Disconnected)
+            await _hubConnection.StopAsync();
+    }
+
+    private async void Disconnect()
+    {
+        await Stop();
+        _hubConnection.Remove("GetPiece");
+        _hubConnection.Remove("RestartGame");
+        _navigationManager.NavigateTo("/");
+    }
+
+    private enum Result
+    {
+        Connecting,
+        OK,
+        Error
+    }
+}

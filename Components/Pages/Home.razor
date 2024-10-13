@@ -1,10 +1,77 @@
 ﻿@page "/"
+@inject NavigationManager _navigationManager
+@inject HubConnection _hubConnection
 
 <PageTitle>Connect four game</PageTitle>
 
-
-
-<div class="main">
-    <h1>Connect four</h1>
-    <ConFour />
+<div class="main container-sm">
+    <div class="row">
+        <h1 class="w-100">Connect four</h1>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary w-100" @onclick='CreateLobbyButton'>Create lobby</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input @bind="InviteCode" type="text" class="input-group-text w-100" />
+        </div>
+        <div class="col">
+            <button @onclick="JoinLobbyButton" class="btn btn-primary w-100">Join lobby</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger"><strong>@errorMessage</strong></div>
+            }
+        </div>
+    </div>
 </div>
+
+@code {
+    public string InviteCode { get; set; } = string.Empty;
+
+    public string errorMessage = string.Empty;
+
+    public async Task CreateLobbyButton()
+    {
+        await Run();
+        var lobby = await _hubConnection.InvokeAsync<string>("CreateLobby");
+        _navigationManager.NavigateTo($"/{lobby}");
+    }
+
+    public async Task JoinLobbyButton()
+    {
+        if (InviteCode.Length != 5)
+        {
+            errorMessage = "Wrong code";
+            return;
+        }
+        
+        await Run();
+        var isConnected = await _hubConnection.InvokeAsync<bool>("JoinLobby", InviteCode);
+
+        if (!isConnected)
+        {
+            errorMessage = "Code is not valid or group is already full";
+            return;
+        }
+
+        _navigationManager.NavigateTo($"/{InviteCode}");
+    }
+
+    public async Task Run()
+    {
+        if (_hubConnection.State == HubConnectionState.Disconnected)
+            await _hubConnection.StartAsync();
+    }
+
+    public async Task Stop()
+    {
+        if (_hubConnection.State != HubConnectionState.Disconnected)
+            await _hubConnection.StopAsync();
+    }
+}

@@ -6,6 +6,12 @@
     --accent-color: #b96c52;
 }
 
+:root {
+    --board-bg: rgb(66, 99, 71);
+    --player1: #ff6347;
+    --player2: rgba(106, 90, 205, 0.5);
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     /*background-color: var(--bg-color);*/
@@ -58,3 +64,30 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+h1 {
+    width: 28rem;
+    text-align: center;
+}
+
+.main {
+    /*display: flex;
+    flex-direction: column;*/
+    max-width: 30em;
+    min-width: 30em;
+    transform: scale();
+    height: 100vh;
+    justify-content: center;
+    align-content: center;
+}
+
+    .main div {
+        margin: 4px 0;
+    }
+
+.t-container {
+    transform: scale(1);
+    transform-origin: center center;
+}
+
+    

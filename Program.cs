@@ -1,5 +1,8 @@
 using ConnectFour;
 using ConnectFour.Components;
+using ConnectFour.Hubs;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +10,27 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddSingleton<GameState>();
+builder.Services.AddSignalR();
+
+builder.Services.AddSingleton<GameHub>();
+builder.Services.AddScoped<GameState>();
+builder.Services.AddScoped(sp =>
+{
+    var delays = new TimeSpan[]
+    {
+        TimeSpan.FromSeconds(5),
+        TimeSpan.FromSeconds(5),
+        TimeSpan.FromSeconds(5),
+        TimeSpan.FromSeconds(5)
+    };
+    var navMan = sp.GetRequiredService<NavigationManager>();
+    var hubConnection = new HubConnectionBuilder()
+        .WithUrl(navMan.ToAbsoluteUri("/hub"))
+        .WithAutomaticReconnect(delays)
+        .Build();
+
+    return hubConnection;
+});
 
 var app = builder.Build();
 
@@ -26,5 +49,7 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapHub<GameHub>("/hub");
 
 app.Run();

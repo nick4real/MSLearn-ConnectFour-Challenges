@@ -78,6 +78,11 @@
             })
     })
 
-    
+    window.addEventListener('resize', function () {
+        const container = document.querySelector('.t-container');
+        const scale = Math.min(window.innerWidth / container.offsetWidth, window.innerHeight / container.offsetHeight);
+        container.style.transform = `scale(${scale})`;
+    });
+
 })()
 

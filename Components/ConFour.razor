@@ -1,19 +1,15 @@
 ﻿@using System.Drawing
 @inject GameState State
 @inject IJSRuntime JS
+@inject HubConnection _hubConnection
+@inject NavigationManager _navigationManager
 @rendermode InteractiveServer
 
-<HeadContent>
-    <style>
-        :root {
-            --board-bg: rgb(66, 99, 71);
-            --player1: #ff6347;
-            --player2: rgba(106, 90, 205, 0.5);
-        }
-    </style>
-</HeadContent>
-
 <article>
+    @if (!isGameStarted)
+    {
+        <div class="alert alert-primary"><strong>Waiting for opponent...</strong></div>
+    }
     @if (!string.IsNullOrEmpty(winnerMessage))
     {
         <div class="alert alert-primary"><strong>@winnerMessage</strong></div>
@@ -26,12 +22,13 @@
     {
         <div class="alert alert-info"><strong>@CurrentTurn</strong></div>
     }
-</article>
+</article> 
 
 <audio id="sound" src="beep.mp3" />
 
 <nav>
-    @for (byte i = 0; i < 7; i++)
+    @if (isGameStarted && isPlayerTurn)
+    for (byte i = 0; i < 7; i++)
     {
         var col = i;
         if (!IsColumnFull(col))
@@ -45,39 +42,63 @@
     }
 </nav>
 
-<div>
-    <div class="board">
-        @for (var i = 0; i < 42; i++)
-        {
-            <span class="container">
-                <span></span>
-            </span>
-        }
-        @for (var i = 0; i < 42; i++)
-        {
-            <span class="@pieces[i]"></span>
-        }
-    </div>
+<div class="board">
+    @for (var i = 0; i < 42; i++)
+    {
+        <span class="container">
+            <span></span>
+        </span>
+    }
+    @for (var i = 0; i < 42; i++)
+    {
+        <span class="@pieces[i]"></span>
+    }
 </div>
 
-<button style="@ResetStyle" class="btn btn-primary mt-2" @onclick="ResetGame">Reset the game</button>
+
+<div class="p-0" style="justify-content: space-evenly; display: flex; width: 100%">
+    <button style="@ResetStyle" class="btn btn-secondary mt-2" @onclick='(() => Disconnect())'>Go to main menu</button>
+    <span style="width: 1em;"/>
+    <button style="@ResetStyle" class="btn btn-primary mt-2" @onclick="(() => ResetGame())">Reset the game</button>
+</div>
+
 
 
 @code {
     private string[] pieces = new string[42];
     private string winnerMessage = string.Empty;
     private string errorMessage = string.Empty;
+    private bool isGameStarted = false;
+    private bool isPlayerTurn = false;
 
     private string CurrentTurn => (winnerMessage == string.Empty) ? $"Player {State.PlayerTurn}'s Turn" : "";
-    private string ResetStyle => (winnerMessage == string.Empty) ? "display: none;" : "width: 28em;";
+    private string ResetStyle => (winnerMessage == string.Empty) ? "display: none;" : "width: 100%";
+    private bool IsColumnFull(byte col) => State.TheBoard[col] != 0;
 
-    private void PlayPiece(byte col)
+    [Parameter]
+    public string LobbyId { get; set; } = string.Empty;
+
+    private void StartGame(byte turn)
+    {
+        ResetGame(true);
+        isGameStarted = true;
+        isPlayerTurn = turn == 0 ? true : false;
+    }
+
+    private void PlayPiece(byte col, bool isAnswer = false)
     {
         try
         {
+            isPlayerTurn = !isPlayerTurn;
             var player = State.PlayerTurn;
             var turn = State.CurrentTurn;
             var landingRow = State.PlayPiece(col);
+
+            if (!isAnswer)
+            {
+                _hubConnection.InvokeAsync("PlayPiece", col, LobbyId);
+            }
+
             pieces[turn] = $"player{player} col{col} drop{landingRow}";
             errorMessage = string.Empty;
             JS.InvokeVoidAsync("playSound", "sound");
@@ -95,24 +116,77 @@
                 GameState.WinState.Tie => "It's a tie!",
                 _ => ""
             };
+            StateHasChanged();
         }
     }
 
-    private bool IsColumnFull(byte col)
+    public async void ResetGame(bool isAnswer = false)
     {
-        return State.TheBoard[col] != 0;
-    }
+        if (!isAnswer)
+        {
+            var res = await _hubConnection.InvokeAsync<bool>("StartGame", LobbyId);
+            if (!res)
+            {
+                OpponentDisconnect();
+                return;
+            }
+        }
 
-    void ResetGame()
-    {
         State.ResetBoard();
         winnerMessage = string.Empty;
         errorMessage = string.Empty;
         pieces = new string[42];
+        StateHasChanged();
+    }
+
+    private async void OpponentDisconnect()
+    {
+        winnerMessage = "Opponent is disconnected";
+    }
+
+    private async void Disconnect()
+    {
+        await _hubConnection.InvokeAsync("CloseLobby", LobbyId);
+        await _hubConnection.StopAsync();
+        _hubConnection.Remove("GetPiece");
+        _hubConnection.Remove("FirstTurnResolve");
+        _hubConnection.Remove("OpponentDisconnect");
+        _navigationManager.NavigateTo("/");
+    }
+
+    private async void HandlerWrap(Action action)
+    {
+        await InvokeAsync(() =>
+        {
+            action.Invoke();
+            StateHasChanged();
+        });
     }
 
     protected override void OnInitialized()
     {
         State.ResetBoard();
+    }
+
+    protected override Task OnParametersSetAsync()
+    {
+        _hubConnection.On<byte>("GetPiece", (col) => HandlerWrap(() => PlayPiece(col, true)));
+        _hubConnection.On<byte>("FirstTurnResolve", (turn) => HandlerWrap(() => StartGame(turn)));
+        _hubConnection.On("OpponentDisconnect", () => HandlerWrap(() =>
+        {
+            OpponentDisconnect();
+        }));
+
+        return base.OnParametersSetAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await _hubConnection.SendAsync("StartGame", LobbyId);
+        }
     }
 }
