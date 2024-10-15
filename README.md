@@ -17,4 +17,4 @@ https://connectfourappservice.azurewebsites.net/
 | Introduce sound effects. | Done |
 | Add a visual indicator and prevent a drop button from being used when the column is full. | Done |
 | Add networking capabilities so that you can play a friend in their browser. | Done |
-| Insert the game into a .NET MAUI with Blazor application and play it on your phone or tablet. | Not yet |
+| Insert the game into a .NET MAUI with Blazor application and play it on your phone or tablet. | Done |
