@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System.Text;
 
 namespace ConnectFour.Hubs
 {
@@ -7,6 +8,18 @@ namespace ConnectFour.Hubs
         private Dictionary<string, HashSet<string>> groups = new Dictionary<string, HashSet<string>>();
         private readonly Random random = new Random();
         private const int maxGroupSize = 2;
+
+        private readonly char[] characters = new char[62];
+        private readonly Random _rnd = new(); 
+
+        public GameHub() : base()
+        {
+            int index = 0;
+
+            for (char c = 'A'; c <= 'Z'; c++) characters[index++] = c;
+            for (char c = 'a'; c <= 'z'; c++) characters[index++] = c;
+            for (char c = '0'; c <= '9'; c++) characters[index++] = c;
+        }
 
         public override Task OnConnectedAsync()
         {
@@ -34,7 +47,10 @@ namespace ConnectFour.Hubs
 
         public async Task<string> CreateLobby()
         {
-            var lobby = Context.ConnectionId.Substring(0, 5);
+            var lobby = await GenerateCode();
+            while (groups.ContainsKey(lobby))
+                lobby = await GenerateCode();
+
             await Groups.AddToGroupAsync(Context.ConnectionId, lobby);
             _ = groups.TryAdd(lobby, new HashSet<string>());
             groups[lobby].Add(Context.ConnectionId);
@@ -85,6 +101,18 @@ namespace ConnectFour.Hubs
         public async Task PlayPiece(byte col, string lobby)
         {
             await Clients.OthersInGroup(lobby).SendAsync("GetPiece", col);
+        }
+
+        private async Task<string> GenerateCode(int length = 5)
+        {
+            StringBuilder res = new();
+
+            for (int i = 0; i < length; i++)
+            {
+                res.Append(characters[_rnd.Next(62)]);
+            }
+
+            return res.ToString();
         }
     }
 }

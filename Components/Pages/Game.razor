@@ -37,7 +37,10 @@
                 <ConFour LobbyId="@InviteCode" />
             </div>
             <div class="row">
-                <input class="form-control" value="@_navigationManager.Uri" readonly/>
+                <h3 class="m-0 p-0">Lobby invite code: @InviteCode</h3>
+            </div>
+            <div class="row pt-1">
+                <input class="form-control" value="@_navigationManager.Uri" readonly />
             </div>
             <div class="row">
                 <button @onclick="(() => WriteTextAsync(Link))" class="btn btn-primary w-100">Copy link</button>
