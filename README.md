@@ -6,7 +6,7 @@ Completing MS Learn Blazor module with challenges.
 https://learn.microsoft.com/en-us/training/modules/dotnet-connect-four/
 
 ## Live link to the web application: 
-https://connectfourappservice.azurewebsites.net/
+https://confour.azurewebsites.net/
 
 ## Challenges
 | Tasks | Is done |
